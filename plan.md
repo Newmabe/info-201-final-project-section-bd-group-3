@@ -1,7 +1,7 @@
 # INFO 201 Final Project Section BD Group 3
 ## Project Proposal
 
-#Project Description
+# Project Description
 
 ### Dataset
 The dataset we are working with contains information on hate crimes in the US based on press reports. It is located in a CSV file sourced from Kaggle, and individual pieces of data within it were collected from Google trends between 28 February 2017 to 16 August 2017. The dataset contains 3700 observations of the following features: Article Date, Article Title, Orgaization, City, State, URL, Keywords, Summary. One concern we have with the dataset is it only has information on reported hate crimes, and therefore is not an accurate representation of hate crimes themselves, but rather on the reporting of them. The dataset can be found [here](https://www.kaggle.com/team-ai/classification-of-hate-crime-in-the-us).
@@ -15,7 +15,7 @@ This data could be useful to a variety of audiences, including but not limited t
 2. Are there certain time periods (months) during which hate crime reports seem to occur more/less frequently?
 3. What demographic group seems to be most frequently targetted in hate crimes according to this dataset?
 
-#Technical Description
+# Technical Description
 
 ### Final Project Format
 
