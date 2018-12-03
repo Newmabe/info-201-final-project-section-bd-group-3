@@ -8,7 +8,10 @@ ui <- navbarPage(
                textInput("state", "Please enter the two letter abbreviation
                          of a state (ex. WA)", "WA")
              ),
-             plotOutput("plot")
+             mainPanel(
+               plotOutput("plot"),
+               textOutput("num_observations")
+             )
            )),
   tabPanel("Time",
            sidebarLayout(
