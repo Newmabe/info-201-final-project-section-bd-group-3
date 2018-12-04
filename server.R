@@ -1,3 +1,4 @@
+#install.packages(c("ggplot2", "mapdata", "maptools", "openintro", "ggmap", "googleway"))
 library(shiny)
 library(dplyr)
 library(ggplot2)
@@ -8,7 +9,7 @@ library(googleway)
 library(ggmap)
 
 server <- function(input, output) {
-  df <- read.csv("20170816_Documenting_Hate - Data.csv", stringsAsFactors = FALSE)
+  df <- read.csv("20170816_Documenting_Hate .csv", stringsAsFactors = FALSE)
   colnames(df) <- c("Article Date", "Crime Date", "Summary", "Organization",
                     "City", "State", "URL", "Blank 1", "Blank 2")
   df <- df %>% 
