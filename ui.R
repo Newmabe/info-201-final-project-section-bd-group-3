@@ -17,10 +17,9 @@ ui <- navbarPage(
            sidebarLayout(
              sidebarPanel(
                selectInput("month", "Please select a month:",
-                           c("January", "February", "March",
+                           c("February", "March",
                              "April", "May", "June", "July",
-                             "August", "September",
-                             "October", "November", "December"))
+                             "August"))
              ), mainPanel(
                plotOutput("month_plot"),
                plotOutput("all_months")
