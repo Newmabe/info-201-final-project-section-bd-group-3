@@ -16,11 +16,12 @@ ui <- navbarPage(
   tabPanel("Time",
            sidebarLayout(
              sidebarPanel(
-               selectInput("month", "Please select a month:",
-                           c("February", "March",
-                             "April", "May", "June", "July",
-                             "August"))
-             ), mainPanel(
+                dateRangeInput("daterange", "Date range:",
+                               start = "2018-2-13",
+                               end = "2018-8-30",
+                               min = "2018-2-13",
+                               max = "2018-8-31")
+                ), mainPanel(
                plotOutput("month_plot"),
                plotOutput("all_months")
              )

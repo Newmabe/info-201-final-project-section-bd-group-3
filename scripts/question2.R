@@ -17,11 +17,12 @@ compare_month <- function(picked_month) {
   month_data <- filter(with_month_day, month == month_index)
   other_month_data <- filter(with_month_day, month != month_index)
   head(other_month_data)
-  top_data <- filter(month_data, State %in% (top_n(data.frame(table(month_data$State)), 6) %>% pull("Var1")))
+  top_data <- filter(month_data, State %in% 
+                        (top_n(data.frame(table(month_data$State)), 6) %>% 
+                            pull("Var1")))
   head(top_data)
   ggplot(data=top_data, aes(article_day, fill = State)) + 
     geom_density(alpha = 0.3)
-    #geom_histogram(data=other_month_data, fill = "blue", alpha = 0.2)
 }
 
 compare_month("June")
