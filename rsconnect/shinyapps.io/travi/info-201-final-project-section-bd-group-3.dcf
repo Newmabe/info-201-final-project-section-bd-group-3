@@ -1,0 +1,13 @@
+name: info-201-final-project-section-bd-group-3
+title: info-201-final-project-section-bd-group-3
+username:
+account: travi
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 605599
+bundleId: 1743873
+url: https://travi.shinyapps.io/info-201-final-project-section-bd-group-3/
+when: 1544046173.59609
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: scripts/question2.R

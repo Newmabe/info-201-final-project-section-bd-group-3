@@ -116,8 +116,8 @@ server <- function(input, output) {
            ylab = "# of crimes", col = "red", labels = TRUE)
   })
   output$all_months <- renderPlot({
-    hist(change_data()$Month, main = "Crimes in 2017", xlab = "Month",
-         ylab = "# of crimes", col = "blue", labels = TRUE)
+    #hist(change_data()$Month, main = "Crimes in 2017", xlab = "Month",
+     #    ylab = "# of crimes", col = "blue", labels = TRUE)
   })
   
   output$top_stories <- renderTable({
