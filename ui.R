@@ -11,7 +11,8 @@ ui <- navbarPage(
              mainPanel(
                plotOutput("plot"),
                textOutput("num_observations"),
-               plotOutput("country_plot")
+               plotOutput("country_plot"),
+               textOutput("summary")
              )
            )),
   tabPanel("Time",
