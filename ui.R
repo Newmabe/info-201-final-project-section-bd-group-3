@@ -25,9 +25,16 @@ ui <- navbarPage(
                plotOutput("all_months")
              )
            )),
-  tabPanel("Demographics",
-           mainPanel(
-             plotOutput("demographic_groups")))
+  tabPanel("Cities",
+           sidebarLayout(
+             sidebarPanel(
+               textInput('city',"Enter the name of a city(case sensitive)",'Seattle')
+             ),
+             mainPanel(
+               plotOutput("city_plot"),
+               textOutput('city_text')
+               ))
+          )
 )
 
 shinyUI(ui)

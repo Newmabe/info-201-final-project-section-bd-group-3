@@ -69,6 +69,32 @@ server <- function(input, output) {
     hist(change_data()$Month, main = "Crimes in 2017", xlab = "Month",
          ylab = "# of crimes", col = "blue", labels = TRUE)
   })
+  
+  #City tab
+  us_cities <- data.frame(read.csv("uscitiesv1.4.csv"), stringsAsFactors = FALSE)
+  city_data <- data.frame(city = unique(df$City), stringsAsFactors = FALSE)
+  counts <- c()
+  city_density <- c()
+  for(city_name in city_data$city){
+    counts <- c(counts, nrow(filter(df, city_name == City)))
+    city_density <- c(city_density, mean(filter(us_cities, city_name == city)$density))
+  }
+  city_data <- mutate(mutate(city_data, count = counts), density = city_density)
+  rm(us_cities)
+  
+  city_selection <- reactive({
+    return(filter(city_data, city == input$city))
+  })
+  
+  output$city_plot <- renderPlot(ggplot(city_data) +
+    geom_point(mapping = aes(x = density, y = count)) +
+      geom_smooth(mapping = aes(x = density, y = count))+
+      coord_cartesian(xlim = c(0, 3000), ylim = c(0, 300))
+  )
+  
+  output$city_text <- renderText(c("In 2017, the population density of", city_selection()$city, "was",
+                                   as.character(city_selection()$density),"people per square mile and there were",
+                                   as.character(city_selection()$count), "reported hate crimes."))
 }
 
 shinyServer(server)
