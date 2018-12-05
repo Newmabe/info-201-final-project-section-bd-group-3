@@ -10,13 +10,20 @@ library(ggmap)
 library(lubridate)
 
 server <- function(input, output) {
-  df <- read.csv("20170816_Documenting_Hate .csv", stringsAsFactors = FALSE)
-  source("scripts/question2.R")
-  colnames(df) <- c("Article_Date", "Crime_Date", "Summary", "Organization",
-                    "City", "State", "URL", "Blank 1", "Blank 2")
-  df <- df %>% 
+  hate_data <- read.csv("20170816_Documenting_Hate .csv", 
+                        stringsAsFactors = FALSE)
+
+  colnames(hate_data) <- c("Article_Date", "Crime_Date", "Summary", 
+                           "Organization", "City", "State", "URL", "Blank 1", 
+                           "Blank 2")
+  df <- hate_data %>% 
     select("Article_Date", "Crime_Date", "Summary", "Organization",
            "City", "State", "URL")
+  #time data processing
+  with_month_day <- mutate(hate_data, Article.Date = mdy_hm(Crime_Date)) %>% 
+     mutate(month = month(Article.Date), Day = day(Article.Date)) %>% 
+     mutate(State = replace(State, State == "", "No State Given")) %>% 
+     select("Summary", "State", "Article.Date", month, Day)
   ## Location Data Processing
   data <- reactive({
     filter(df, State == input$state)
@@ -90,7 +97,19 @@ server <- function(input, output) {
       filter(change_data(), Month == input$month)
   })
   output$time_selectors <- renderPlot({
-     plot(compare_month(input$daterange))
+     
+     month_data <- filter(with_month_day, (Article.Date > ymd(input$daterange[1]) & 
+                                              Article.Date < ymd(input$daterange[2])))
+     top_data <- filter(month_data, State %in% 
+                           (top_n(data.frame(table(month_data$State)), 6) %>% 
+                               pull("Var1")))
+     ggplot(data=top_data, aes(Article.Date, fill = State)) + 
+        geom_density(alpha = 0.3, adjust=1/4) + 
+        labs(title = "Most Popular States", x = "Date", 
+             subtitle = "Click on Graph to see popular news articles for that day",
+             y = "Proportion of News Articles", color = "Top Locations") +
+        theme(plot.title = element_text(lineheight = 1.5, face = "bold", 
+                                        hjust = 0.5))
   })
   output$month_plot <- renderPlot({
       hist(month_data()$Day, main = paste("Crimes in", input$month), xlab = "Date of Crime",
@@ -101,8 +120,19 @@ server <- function(input, output) {
          ylab = "# of crimes", col = "blue", labels = TRUE)
   })
   
-  output$test <- renderText({
-     paste(ymd(input$daterange[1])<ymd("2018-4-5"))
+  output$top_stories <- renderTable({
+     #https://shiny.rstudio.com/articles/plot-interaction.html
+     x_val <- function(e) {
+        if(is.null(e)) return("NULL\n")
+        return(round(e$x, 1))
+     }
+     clicked_time <- (as_datetime(x_val(input$plot_click)))
+     day_data <- select(with_month_day, Summary, month, State, Day) %>% 
+        filter(Day == day(clicked_time), month == month(clicked_time))
+     top_state <- filter(day_data, State %in% 
+                 (top_n(data.frame(table(day_data$State)), 6) %>% 
+                             pull("Var1")))
+     select(top_state, State, Headline = Summary)
   })
   
   #City tab

@@ -29,10 +29,11 @@ ui <- navbarPage(
                            "August"), "February")
                
              ), mainPanel(
-               plotOutput("time_selectors"),
+               plotOutput("time_selectors", click = "plot_click"),
+               tableOutput("top_stories"),
                plotOutput("month_plot"),
-               plotOutput("all_months"),
-               textOutput("test")
+               plotOutput("all_months")
+               
              )
            )),
   tabPanel("Cities",
