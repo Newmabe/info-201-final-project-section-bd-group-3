@@ -31,7 +31,9 @@ ui <- navbarPage(
                textInput('city',"Enter the name of a city(case sensitive)",'Seattle')
              ),
              mainPanel(
-               plotOutput("city_plot"),
+               plotOutput("cities_plot"),
+               textOutput('cities_text'),
+               plotOutput('city_plot'),
                textOutput('city_text')
                ))
           )

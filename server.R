@@ -82,19 +82,41 @@ server <- function(input, output) {
   city_data <- mutate(mutate(city_data, count = counts), density = city_density)
   rm(us_cities)
   
-  city_selection <- reactive({
-    return(filter(city_data, city == input$city))
-  })
-  
-  output$city_plot <- renderPlot(ggplot(city_data) +
+  output$cities_plot <- renderPlot(ggplot(city_data) +
     geom_point(mapping = aes(x = density, y = count)) +
       geom_smooth(mapping = aes(x = density, y = count))+
       coord_cartesian(xlim = c(0, 3000), ylim = c(0, 300))
   )
   
+  city_selection <- reactive({
+    return(filter(city_data, city == input$city))
+  })
+  
+  city_selection_color <- reactive({
+    colors <- c()
+    for(city_name in city_data$city){
+      if(city_name == input$city){
+        colors <- c(colors, 'red')
+      } else{
+        colors <- c(colors, NA)
+      }
+    }
+    return(colors)
+  })
+  
+  output$cities_text <- renderText("The graph above plots population density vs number of hate crimes for all cities contained in the dataset.
+                                   The graph does not seem to have a significant trend for number of hate crimes reported as population density increases.")
+  
+  output$city_plot <- renderPlot(ggplot(city_data, aes(x = "", y = count, fill = city_selection_color())) +
+                                  geom_bar(width = 1, stat = 'identity') +
+                                  coord_polar("y", start=0) +
+                                   theme(legend.position = 'none')
+                                  )
+  
   output$city_text <- renderText(c("In 2017, the population density of", city_selection()$city, "was",
                                    as.character(city_selection()$density),"people per square mile and there were",
-                                   as.character(city_selection()$count), "reported hate crimes."))
+                                   as.character(city_selection()$count), "reported hate crimes. In the graph above, the colored in
+                                   section is the percentage of total hate crime in the US in that city."))
 }
 
 shinyServer(server)
