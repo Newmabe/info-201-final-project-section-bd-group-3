@@ -7,14 +7,16 @@ library(maptools)
 library(openintro)
 library(googleway)
 library(ggmap)
+library(lubridate)
 
 server <- function(input, output) {
   df <- read.csv("20170816_Documenting_Hate .csv", stringsAsFactors = FALSE)
-  colnames(df) <- c("Article Date", "Crime Date", "Summary", "Organization",
+  colnames(df) <- c("Article_Date", "Crime_Date", "Summary", "Organization",
                     "City", "State", "URL", "Blank 1", "Blank 2")
   df <- df %>% 
-    select("Article Date", "Crime Date", "Summary", "Organization",
+    select("Article_Date", "Crime_Date", "Summary", "Organization",
            "City", "State", "URL")
+  ## Location Data Processing
   data <- reactive({
     filter(df, State == input$state)
   })
@@ -48,6 +50,24 @@ server <- function(input, output) {
     state <- state_name()
     message <- paste("In 2017, there were", num[1, 1], "hate crimes reported in", state)
     return(message)
+  })
+  
+  ## Time Data Processing
+  df <- mutate(df, Crime_Date = as.Date(Crime_Date, format = "%m/%d/%Y"))
+  change_data <- reactive({
+    mutate(df, Month = months(df$Crime_Date)) %>% 
+      mutate(Day = day(df$Crime_Date)) 
+  })
+  month_data <- reactive({
+      filter(change_data(), Month == input$month)
+  })
+  output$month_plot <- renderPlot({
+      hist(month_data()$Day, main = paste("Crimes in", input$month), xlab = "Date of Crime",
+           ylab = "# of crimes", col = "red", labels = TRUE)
+  })
+  output$all_months <- renderPlot({
+    hist(change_data()$Month, main = "Crimes in 2017", xlab = "Month",
+         ylab = "# of crimes", col = "blue", labels = TRUE)
   })
 }
 
