@@ -29,6 +29,10 @@ server <- function(input, output) {
   state_data <- reactive({
     inner_join(data(), city_map(), by = c("City" = "city"))
   })
+  
+  country_data <- reactive({
+    inner_join(df, read.csv("uscitiesv1.4.csv", stringsAsFactors = FALSE), by = c("City" = "city"))
+  })
   state_name <- reactive({
     abbr2state(input$state)
   })
@@ -39,6 +43,14 @@ server <- function(input, output) {
       coord_fixed(1.3) +
       geom_point(data = state_data(), aes(x=lng, y=lat), color="red", size = 3, na.rm = TRUE) +
       ggtitle(paste("Hate Crimes in", state_name()))
+  })
+  
+  output$country_plot <- renderPlot({
+    ggplot() +
+      geom_polygon(data = map_data("usa"), aes(x=long, y=lat, group = group)) +
+      coord_fixed(1.3) +
+      geom_point(data = country_data(), aes(x=lng, y=lat), color="blue", size = 1, na.rm = TRUE) +
+      ggtitle("Hate Crimes in USA")
   })
   
   observations <- reactive({
