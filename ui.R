@@ -17,13 +17,20 @@ ui <- navbarPage(
            sidebarLayout(
              sidebarPanel(
                 dateRangeInput("daterange", "Date range:",
-                               start = "2018-2-13",
-                               end = "2018-8-30",
-                               min = "2018-2-13",
-                               max = "2018-8-31")
-                ), mainPanel(
+                               start = "2017-2-13",
+                               end = "2017-8-30",
+                               min = "2017-2-13",
+                               max = "2017-8-31"), 
+             selectInput("month", "Please select a month:",
+                         c("February", "March",
+                           "April", "May", "June", "July",
+                           "August"), "February")
+               
+             ), mainPanel(
                plotOutput("month_plot"),
-               plotOutput("all_months")
+               plotOutput("all_months"), 
+               plotOutput("time_selectors"),
+               textOutput("test")
              )
            )),
   tabPanel("Demographics",
