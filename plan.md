@@ -13,7 +13,7 @@ This data could be useful to a variety of audiences, including but not limited t
 
 1. Where do the most hate crimes occur (or rather, where are most hate crimes reported)?
 2. Are there certain time periods (months) during which hate crime reports seem to occur more/less frequently?
-3. What demographic group seems to be most frequently targetted in hate crimes according to this dataset?
+3. How does population density in cities affect reported hate crimes?
 
 # Technical Description
 

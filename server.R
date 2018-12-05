@@ -30,6 +30,10 @@ server <- function(input, output) {
   state_data <- reactive({
     inner_join(data(), city_map(), by = c("City" = "city"))
   })
+  
+  country_data <- reactive({
+    inner_join(df, read.csv("uscitiesv1.4.csv", stringsAsFactors = FALSE), by = c("City" = "city"))
+  })
   state_name <- reactive({
     abbr2state(input$state)
   })
@@ -40,6 +44,14 @@ server <- function(input, output) {
       coord_fixed(1.3) +
       geom_point(data = state_data(), aes(x=lng, y=lat), color="red", size = 3, na.rm = TRUE) +
       ggtitle(paste("Hate Crimes in", state_name()))
+  })
+  
+  output$country_plot <- renderPlot({
+    ggplot() +
+      geom_polygon(data = map_data("usa"), aes(x=long, y=lat, group = group)) +
+      coord_fixed(1.3) +
+      geom_point(data = country_data(), aes(x=lng, y=lat), color="blue", size = 1, na.rm = TRUE) +
+      ggtitle("Hate Crimes in USA")
   })
   
   observations <- reactive({
@@ -62,6 +74,9 @@ server <- function(input, output) {
   month_data <- reactive({
       filter(change_data(), Month == input$month)
   })
+  output$time_selectors <- renderPlot({
+     plot(compare_month(input$daterange))
+  })
   output$month_plot <- renderPlot({
       hist(month_data()$Day, main = paste("Crimes in", input$month), xlab = "Date of Crime",
            ylab = "# of crimes", col = "red", labels = TRUE)
@@ -70,13 +85,58 @@ server <- function(input, output) {
     hist(change_data()$Month, main = "Crimes in 2017", xlab = "Month",
          ylab = "# of crimes", col = "blue", labels = TRUE)
   })
-  output$time_selectors <- renderPlot({
-     plot(compare_month(input$daterange))
-  })
+  
   output$test <- renderText({
      paste(ymd(input$daterange[1])<ymd("2018-4-5"))
   })
-     
+  
+  #City tab
+  us_cities <- data.frame(read.csv("uscitiesv1.4.csv"), stringsAsFactors = FALSE)
+  city_data <- data.frame(city = unique(df$City), stringsAsFactors = FALSE)
+  counts <- c()
+  city_density <- c()
+  for(city_name in city_data$city){
+    counts <- c(counts, nrow(filter(df, city_name == City)))
+    city_density <- c(city_density, mean(filter(us_cities, city_name == city)$density))
+  }
+  city_data <- mutate(mutate(city_data, count = counts), density = city_density)
+  rm(us_cities)
+  
+  output$cities_plot <- renderPlot(ggplot(city_data) +
+    geom_point(mapping = aes(x = density, y = count)) +
+      geom_smooth(mapping = aes(x = density, y = count))+
+      coord_cartesian(xlim = c(0, 3000), ylim = c(0, 300))
+  )
+  
+  city_selection <- reactive({
+    return(filter(city_data, city == input$city))
+  })
+  
+  city_selection_color <- reactive({
+    colors <- c()
+    for(city_name in city_data$city){
+      if(city_name == input$city){
+        colors <- c(colors, 'red')
+      } else{
+        colors <- c(colors, NA)
+      }
+    }
+    return(colors)
+  })
+  
+  output$cities_text <- renderText("The graph above plots population density vs number of hate crimes for all cities contained in the dataset.
+                                   The graph does not seem to have a significant trend for number of hate crimes reported as population density increases.")
+  
+  output$city_plot <- renderPlot(ggplot(city_data, aes(x = "", y = count, fill = city_selection_color())) +
+                                  geom_bar(width = 1, stat = 'identity') +
+                                  coord_polar("y", start=0) +
+                                   theme(legend.position = 'none')
+                                  )
+  
+  output$city_text <- renderText(c("In 2017, the population density of", city_selection()$city, "was",
+                                   as.character(city_selection()$density),"people per square mile and there were",
+                                   as.character(city_selection()$count), "reported hate crimes. In the graph above, the colored in
+                                   section is the percentage of total hate crime in the US in that city."))
 }
 
 shinyServer(server)

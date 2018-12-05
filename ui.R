@@ -10,7 +10,8 @@ ui <- navbarPage(
              ),
              mainPanel(
                plotOutput("plot"),
-               textOutput("num_observations")
+               textOutput("num_observations"),
+               plotOutput("country_plot")
              )
            )),
   tabPanel("Time",
@@ -27,15 +28,24 @@ ui <- navbarPage(
                            "August"), "February")
                
              ), mainPanel(
-               plotOutput("month_plot"),
-               plotOutput("all_months"), 
                plotOutput("time_selectors"),
+               plotOutput("month_plot"),
+               plotOutput("all_months"),
                textOutput("test")
              )
            )),
-  tabPanel("Demographics",
-           mainPanel(
-             plotOutput("demographic_groups")))
+  tabPanel("Cities",
+           sidebarLayout(
+             sidebarPanel(
+               textInput('city',"Enter the name of a city(case sensitive)",'Seattle')
+             ),
+             mainPanel(
+               plotOutput("cities_plot"),
+               textOutput('cities_text'),
+               plotOutput('city_plot'),
+               textOutput('city_text')
+               ))
+          )
 )
 
 shinyUI(ui)

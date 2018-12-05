@@ -15,5 +15,5 @@ compare_month <- function(date_range) {
                             pull("Var1")))
   head(top_data)
   return(ggplot(data=top_data, aes(article_day, fill = State)) + 
-    geom_density(alpha = 0.3, adjust=1/5))
+    geom_density(alpha = 0.3, adjust=1/4))
 }
