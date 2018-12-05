@@ -64,6 +64,21 @@ server <- function(input, output) {
     return(message)
   })
   
+  output$summary <- renderText({
+    states_data <- data.frame(state = unique(abbr2state(df$State)), stringsAsFactors = FALSE)
+    counts <- c()
+    for(state_name in states_data$state) {
+      counts <- c(counts, nrow(filter(df, state_name == State)))
+    }
+    states_data <- mutate(states_data, count = counts)
+    maximum <- 0
+    for(count in states_data$count) {
+      maximum <- max(maximum, count)
+    }
+    max_crime <- filter(states_data, count == maximum)
+    return (paste("The most hate crimes occurred in", max_crime[1, 1], "with", maximum, "crimes reported in 2017."))
+  })
+  
   ## Time Data Processing
   df <- mutate(df, Crime_Date = as.Date(Crime_Date, format = "%m/%d/%Y"))
   change_data <- reactive({
